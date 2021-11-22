@@ -1,17 +1,17 @@
 const { ApolloServer } = require('apollo-server');
 const typeDefs = require('./schema');
+const resolvers = require('./resolvers');
+const BrandAPI = require('./datasources/brand-api');
 
-const mocks = {
-  Query: () => ({ brands: [...new Array(6)] }),
-  Brand: () => ({
-    id: () => 1,
-    name: () => 'LarderDB',
-    location: () => 'Cleveland, OH',
-    category: () => 'Food',
-  }),
-};
-
-const server = new ApolloServer({ typeDefs, mocks });
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  dataSources: () => {
+    return {
+      brandAPI: new BrandAPI(),
+    };
+  },
+});
 
 server.listen().then(() => {
   console.log(`
